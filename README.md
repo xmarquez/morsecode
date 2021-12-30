@@ -4,6 +4,8 @@
 # morsecode
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/xmarquez/morsecode/workflows/R-CMD-check/badge.svg)](https://github.com/xmarquez/morsecode/actions)
 <!-- badges: end -->
 
 This package converts text into Morse code, in various formats suitable
