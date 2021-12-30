@@ -14,7 +14,7 @@ text_to_morse_sounds(
 }
 \arguments{
 \item{text}{The text to convert. Ignores anything except the letters a-z
-(both upper and lower case), numbers, and spaces.#' @param pulse_duration}
+(both upper and lower case), numbers, and spaces.}
 
 \item{pulse_duration}{How long the dot lasts, in seconds. Default is 0.25
 seconds. Bars last for three times as long.}

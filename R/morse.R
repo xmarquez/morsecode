@@ -145,7 +145,7 @@ text_to_morse_segments <- function(text, line_length = 40) {
 #' Converts text to Morse code sounds
 #'
 #' @param text The text to convert. Ignores anything except the letters a-z
-#'   (both upper and lower case), numbers, and spaces.#' @param pulse_duration
+#'   (both upper and lower case), numbers, and spaces.
 #' @param pulse_duration How long the dot lasts, in seconds. Default is 0.25
 #'   seconds. Bars last for three times as long.
 #' @param play Whether to play the resulting sound immediately. Default is
