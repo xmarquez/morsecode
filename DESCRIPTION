@@ -1,0 +1,33 @@
+Package: morsecode
+Type: Package
+Title: Converts ASCII Text to Morse Code
+Version: 0.1.0
+Authors@R: 
+    person(given = "Xavier",
+           family = "Marquez",
+           role = c("aut", "cre"),
+           email = "xavier.marquez@vuw.ac.nz",
+           comment = c(ORCID = "0000-0001-7653-9334"))
+Maintainer@R: 
+    person(given = "Xavier",
+           family = "Marquez",
+           role = c("aut", "cre"),
+           email = "xavier.marquez@vuw.ac.nz",
+           comment = c(ORCID = "0000-0001-7653-9334"))
+Description: This package provides functions to transform ASCII text to Morse code.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    audio,
+    dplyr,
+    ggplot2,
+    magrittr,
+    purrr,
+    raster,
+    seewave,
+    stringr
+Depends:
+    R (>= 2.10)
