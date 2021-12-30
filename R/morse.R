@@ -157,9 +157,10 @@ text_to_morse_segments <- function(text, line_length = 40) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' sound <- text_to_morse_sounds("SOS SOS SOS")
 #' audio::play(sound, rate = 8000)
-#' audio::play(sound, rate = 24000)
+#' audio::play(sound, rate = 24000)}
 text_to_morse_sounds <- function(text,
                                  pulse_duration = 0.25,
                                  play = TRUE,

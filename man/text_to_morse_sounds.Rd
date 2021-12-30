@@ -33,7 +33,8 @@ A soundwave matrix that can be played via \link[audio:play]{audio::play}.
 Converts text to Morse code sounds
 }
 \examples{
+\dontrun{
 sound <- text_to_morse_sounds("SOS SOS SOS")
 audio::play(sound, rate = 8000)
-audio::play(sound, rate = 24000)
+audio::play(sound, rate = 24000)}
 }
