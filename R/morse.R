@@ -119,8 +119,18 @@ text_to_morse_matrix <- function(text, line_length = 40) {
 text_to_morse_segments <- function(text, line_length = 40) {
 
   x <- xend <- y <- yend <- group <- layer <- NULL
+  symbol <- symbol_length <- cum_length <- linebreak <- line_num <- NULL
 
-  morse <- text_to_morse_matrix(text, line_length = line_length)
+  morse_chars <- text_to_morse_chars2(text)
+
+  morse_lengths <- morse_chars %>%
+    purrr::map_dbl(~stringr::str_count(.x, "[\\.\\-]"))
+
+  morse_groups <- names(morse_chars) %>%
+    purrr::map2(morse_lengths, ~rep(.x, each = .y)) %>%
+    unlist()
+
+  morse <- text_to_morse_matrix(text, line_length = stringr::str_length(text) * max(nchar(morse_code$morse)) * 3)
 
   morse_raster <- morse %>%
     raster::raster()
@@ -138,7 +148,42 @@ text_to_morse_segments <- function(text, line_length = 40) {
     dplyr::select(x, xend, y, yend, group) %>%
     dplyr::ungroup()
 
-  morse_segments
+
+  morse_segments <- morse_segments %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(letter = morse_groups,
+                  symbol = morse_chars %>%
+                    paste(collapse = "") %>%
+                    stringr::str_remove_all(" ") %>%
+                    stringr::str_split("") %>%
+                    unlist(),
+                  symbol_length = ifelse(symbol == ".", 1, 3),
+                  cum_length = cumsum(symbol_length))
+
+  group_sizes <- morse_lengths[ morse_lengths != 0]
+
+  pos <- 1:length(group_sizes) %>%
+    purrr::map2(group_sizes, ~rep(.x, each = .y)) %>%
+    unlist()
+
+  morse_segments$pos <- pos
+
+  morse_segments  %>%
+    dplyr::group_by(pos) %>%
+    dplyr::mutate(linebreak = ifelse(any(c(cum_length,
+                                           cum_length + 1,
+                                           cum_length + 2) %% line_length == 0) &&
+                                       max(cum_length) >= line_length,
+                                     TRUE, FALSE)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(line_num = count_seq_breaks(linebreak, seq_step = 0) - (linebreak %% 2),
+                  line_num = (line_num + 1)/2,
+                  y = y - line_num,
+                  yend = yend - line_num) %>%
+    dplyr::group_by(line_num) %>%
+    dplyr::mutate(line_length = max(cumsum(symbol_length)),
+                  xend = xend - dplyr::first(x),
+                  x = x - dplyr::first(x))
 
 }
 
@@ -224,4 +269,25 @@ morse_to_text <- function(morse) {
   ifelse(length(lhs) == 0,
          rhs,
          lhs)
+}
+
+text_to_morse_chars2 <- function(text) {
+  text <- toupper(text)
+
+  morse_code <- morse_code %>%
+    dplyr::mutate(morse = ifelse(morse == "",
+                                 " ", morse))
+
+  text <- text %>% stringr::str_remove_all("[^A-Z0-9 ]")
+
+  chars <- strsplit(text, "") %>%
+    unlist()
+
+  morse <- chars %>%
+    purrr::map_chr(~morse_code$morse[ morse_code$char %in% .])
+
+  names(morse) <- chars
+
+  morse
+
 }
