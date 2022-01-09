@@ -170,14 +170,15 @@ text_to_morse_segments <- function(text, line_length = 40) {
 
   morse_segments  %>%
     dplyr::group_by(pos) %>%
-    dplyr::mutate(linebreak = ifelse(any(c(cum_length,
-                                           cum_length + 1,
-                                           cum_length + 2) %% line_length == 0) &&
-                                       max(cum_length) >= line_length,
-                                     TRUE, FALSE)) %>%
+    dplyr::mutate(linebreak = ifelse(any(cum_length %% line_length == 0) ||
+                                       max(cum_length) >= (line_length * unique(pos)),
+                                     unique(pos), NA_integer_)) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(line_num = count_seq_breaks(linebreak, seq_step = 0) - (linebreak %% 2),
-                  line_num = (line_num + 1)/2,
+    tidyr::fill(linebreak, .direction = "up") %>%
+    dplyr::mutate(linebreak = ifelse(is.na(linebreak),
+                                     min(pos[is.na(linebreak)]),
+                                     linebreak),
+                  line_num = count_seq_breaks(linebreak, seq_step = 0),
                   y = y - line_num,
                   yend = yend - line_num) %>%
     dplyr::group_by(line_num) %>%
